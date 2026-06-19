@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environments
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Training/runtime outputs
+logs/
+output/
+outputs/
+results/
+checkpoints/
+runs/
+wandb/
+tensorboard/
+*.log
+
+# Local config and machine-specific files
+.env
+.env.*
+*.local
+.DS_Store
+Thumbs.db
+
+# Large archives generated outside the repo
+*.zip
+*.tar
+*.tar.gz
+*.7z
+
+# Keep the selected packaged checkpoint tracked explicitly.
+!model/ORTrack_ep0008.pth.tar

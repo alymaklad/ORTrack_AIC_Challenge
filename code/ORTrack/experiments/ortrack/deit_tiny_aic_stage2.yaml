@@ -1,0 +1,83 @@
+DATA:
+  SAMPLER_MODE: contest_curriculum
+  MAX_SAMPLE_INTERVAL: 120
+  MEAN:
+  - 0.485
+  - 0.456
+  - 0.406
+  SEARCH:
+    CENTER_JITTER: 3.0
+    FACTOR: 4.0
+    SCALE_JITTER: 0.25
+    SIZE: 256
+    NUMBER: 1
+  STD:
+  - 0.229
+  - 0.224
+  - 0.225
+  TEMPLATE:
+    CENTER_JITTER: 0
+    FACTOR: 2.0
+    SCALE_JITTER: 0
+    SIZE: 128
+    NUMBER: 1
+  CONTEST:
+    MANIFEST: C:\AIC\Data\metadata\contestant_manifest.json
+    DATA_ROOT: C:\AIC\Data
+    SPLIT_FILE: C:\AIC\ORTrack\data_specs\aic_contest_train.txt
+    SPLIT_FILE_VAL: C:\AIC\ORTrack\data_specs\aic_contest_val.txt
+    FRAME_CACHE_DIR: C:\AIC\Data\frames_cache
+    CURRICULUM_STAGE: 2
+    TEMPORAL_STRATEGY: curriculum
+    VELOCITY_AWARE: True
+    MIN_AREA_RATIO: 0.0
+    MIN_VALID_FRAMES: 20
+  TRAIN:
+    DATASETS_NAME:
+    - AIC_CONTEST
+    DATASETS_RATIO:
+    - 1
+    SAMPLE_PER_EPOCH: 24000
+  VAL:
+    DATASETS_NAME:
+    - AIC_CONTEST_VAL
+    DATASETS_RATIO:
+    - 1
+    SAMPLE_PER_EPOCH: 2000
+MODEL:
+  PRETRAIN_FILE: C:\AIC\ORTrack\output_aic_finetune\checkpoints\train\ortrack\deit_tiny_aic_stage1\ORTrack_ep0008.pth.tar
+  IS_DISTILL: False
+  EXTRA_MERGER: False
+  RETURN_INTER: False
+  BACKBONE:
+    TYPE: deit_tiny_patch16_224
+    STRIDE: 16
+  HEAD:
+    TYPE: CENTER
+    NUM_CHANNELS: 256
+TRAIN:
+  BACKBONE_MULTIPLIER: 0.1
+  DROP_PATH_RATE: 0.1
+  BATCH_SIZE: 16
+  EPOCH: 30
+  GIOU_WEIGHT: 2.0
+  L1_WEIGHT: 5.0
+  GRAD_CLIP_NORM: 0.1
+  LR: 0.00008
+  LR_DROP_EPOCH: 24
+  NUM_WORKER: 4
+  OPTIMIZER: ADAMW
+  PRINT_INTERVAL: 25
+  SAVE_EVERY_EPOCH: True
+  SCHEDULER:
+    TYPE: step
+    DECAY_RATE: 0.1
+  VAL_EPOCH_INTERVAL: 2
+  WEIGHT_DECAY: 0.0001
+  AMP: True
+TEST:
+  EPOCH: 30
+  SEARCH_FACTOR: 4.0
+  SEARCH_SIZE: 256
+  TEMPLATE_FACTOR: 2.0
+  TEMPLATE_SIZE: 128

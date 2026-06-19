@@ -1,0 +1,6 @@
+{
+  "train_sequences": 217,
+  "val_sequences": 38,
+  "val_ratio": 0.15,
+  "seed": 42
+}
