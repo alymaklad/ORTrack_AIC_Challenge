@@ -1,14 +1,15 @@
 import argparse
 import csv
 import json
+import os
 from collections import defaultdict
 from pathlib import Path
 
 import cv2
 
 
-ROOT = Path(r"C:\AIC")
-DATA_ROOT = ROOT / "Data"
+ROOT = Path(__file__).resolve().parents[2]
+DATA_ROOT = Path(os.environ.get("AIC_DATA_ROOT", "/data"))
 MANIFEST_PATH = DATA_ROOT / "metadata" / "contestant_manifest.json"
 CLIP_SECONDS = 12
 MAX_WIDTH = 1280

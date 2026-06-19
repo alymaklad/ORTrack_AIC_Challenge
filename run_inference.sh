@@ -3,8 +3,9 @@ set -euo pipefail
 
 DATA_ROOT="${DATA_ROOT:-/data}"
 OUTPUT_DIR="${OUTPUT_DIR:-/output}"
-CHECKPOINT="${CHECKPOINT:-/workspace/model/ORTrack_ep0008.pth.tar}"
+CHECKPOINT="${CHECKPOINT:-/workspace/model/ORTrack_AIC.pth.tar}"
 CONFIG="${CONFIG:-deit_tiny_aic_stage1}"
+OUTPUT_FILE="${OUTPUT_FILE:-ortrack_aic_predictions.csv}"
 
 mkdir -p "${OUTPUT_DIR}"
 
@@ -15,4 +16,4 @@ python -B /workspace/ORTrack/make_aic_public_submission.py \
   --split public_lb \
   --config "${CONFIG}" \
   --checkpoint "${CHECKPOINT}" \
-  --output "${OUTPUT_DIR}/ortrack_deit_aic_stage1_ep0008_public_lb_submission.csv"
+  --output "${OUTPUT_DIR}/${OUTPUT_FILE}"

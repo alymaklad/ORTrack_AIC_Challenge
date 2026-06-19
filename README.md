@@ -1,98 +1,132 @@
-# ORTrack Final Submission ep0008
+# ORTrack AIC Challenge
 
 ![ORTrack architecture](code/ORTrack/assets/ORTrack.png)
 
-This repository packages the selected AIC 2026 final inference submission built from an `ORTrack-DeiT Tiny` checkpoint. The included checkpoint, `ORTrack_ep0008.pth.tar`, was selected as the most reliable final candidate among the tested variants.
+This repository contains an ORTrack-based UAV object tracking project prepared for the AIC Challenge. It packages the ORTrack source snapshot, a DeiT-Tiny tracking checkpoint, Docker inference scripts, local evaluation helpers, and an example prediction file.
 
-![Submission overview](docs/assets/submission_overview.png)
+ORTrack is a transformer-based single-object tracker. For the AIC workflow, each video sequence is initialized with the first-frame bounding box from the challenge metadata. The tracker then processes frames online, one frame at a time, and writes bounding-box predictions for the requested sample IDs.
 
 ## Repository Contents
 
 | Path | Purpose |
 | --- | --- |
-| `code/ORTrack/` | Source snapshot used for inference and local evaluation. |
-| `model/ORTrack_ep0008.pth.tar` | Selected trained checkpoint. |
-| `submission/ortrack_deit_aic_stage1_ep0008_public_lb_submission.csv` | Public-LB prediction CSV. |
-| `Dockerfile` | Reproducible inference image. |
-| `run_inference.sh` | Container inference entrypoint. |
-| `run_evaluation.sh` | Optional local evaluation entrypoint. |
+| `code/ORTrack/` | ORTrack source code and AIC-specific inference/evaluation tools. |
+| `model/ORTrack_AIC.pth.tar` | Trained DeiT-Tiny ORTrack checkpoint. |
+| `submission/ortrack_aic_predictions.csv` | Example prediction CSV generated with the packaged model. |
+| `Dockerfile` | Reproducible CUDA/PyTorch inference environment. |
+| `run_inference.sh` | Container entrypoint for prediction generation. |
+| `run_evaluation.sh` | Optional local evaluation entrypoint for annotated splits. |
 | `technical_report.md` | Short method and reproducibility report. |
 
-## Submission Snapshot
+## Model Workflow
 
-- Predictions: `74,293`
-- Sequence groups: `89`
-- Median predicted box: `41.47 x 69.96` pixels
-- Median predicted box area: `2,980.55` square pixels
-- Inference mode: online, first-frame initialization only
-- Selected checkpoint: `ORTrack_ep0008.pth.tar`
+The inference pipeline expects the AIC dataset directory to contain:
 
-## Native Inference
+- `metadata/contestant_manifest.json`
+- `metadata/sample_submission.csv`
+- the video/image data referenced by the manifest
 
-From a Windows machine with the dataset at `C:\AIC\Data`:
+At inference time, the tracker:
 
-```powershell
-$env:KMP_DUPLICATE_LIB_OK='TRUE'
-python -B C:\AIC\ORTrack\make_aic_public_submission.py `
-  --data-root C:\AIC\Data `
-  --manifest C:\AIC\Data\metadata\contestant_manifest.json `
-  --sample C:\AIC\Data\metadata\sample_submission.csv `
-  --split public_lb `
-  --config deit_tiny_aic_stage1 `
-  --checkpoint C:\AIC\ORTrack_final_submission_ep0008\model\ORTrack_ep0008.pth.tar `
-  --output C:\AIC\ORTrack_final_submission_ep0008\submission\ortrack_deit_aic_stage1_ep0008_public_lb_submission.csv
-```
+1. Reads the challenge metadata and sample-submission IDs.
+2. Initializes each sequence from its first annotated bounding box.
+3. Runs ORTrack online across the sequence at the original frame rate.
+4. Reuses the previous prediction if an individual frame cannot be read.
+5. Writes predictions as `id,x,y,w,h`.
 
-The inference script initializes each sequence from the first-frame annotation provided in the manifest, runs online frame-by-frame tracking at the original frame rate, and writes one prediction row for every required sample id.
+## Docker Usage
 
-## Docker Inference
-
-Build:
+Build the image:
 
 ```bash
-docker build -t aic-ortrack-ep0008 .
+docker build -t ortrack-aic .
 ```
 
-Run inference with the competition data mounted at `/data` and an output folder mounted at `/output`:
+Run inference:
 
 ```bash
 docker run --gpus all --rm \
-  -v /path/to/Data:/data:ro \
+  -v /path/to/aic-data:/data:ro \
   -v /path/to/output:/output \
-  aic-ortrack-ep0008
+  ortrack-aic
 ```
 
-The output CSV is written to:
+The default output file is:
 
 ```text
-/output/ortrack_deit_aic_stage1_ep0008_public_lb_submission.csv
+/output/ortrack_aic_predictions.csv
+```
+
+You can override the default paths and config with environment variables:
+
+```bash
+docker run --gpus all --rm \
+  -e DATA_ROOT=/data \
+  -e OUTPUT_DIR=/output \
+  -e CONFIG=deit_tiny_aic_stage1 \
+  -e CHECKPOINT=/workspace/model/ORTrack_AIC.pth.tar \
+  -v /path/to/aic-data:/data:ro \
+  -v /path/to/output:/output \
+  ortrack-aic
+```
+
+## Native Python Usage
+
+Install dependencies in your preferred Python environment, then run the inference script from the project root:
+
+```bash
+pip install -r requirements_docker.txt
+python -B code/ORTrack/make_aic_public_submission.py \
+  --data-root /path/to/aic-data \
+  --manifest /path/to/aic-data/metadata/contestant_manifest.json \
+  --sample /path/to/aic-data/metadata/sample_submission.csv \
+  --split public_lb \
+  --config deit_tiny_aic_stage1 \
+  --checkpoint model/ORTrack_AIC.pth.tar \
+  --output /path/to/output/ortrack_aic_predictions.csv
+```
+
+On Windows PowerShell, use the same arguments with variables for your local folders:
+
+```powershell
+$AIC_DATA_ROOT = "<path-to-aic-data>"
+$OUTPUT_DIR = "<path-to-output>"
+python -B code/ORTrack/make_aic_public_submission.py `
+  --data-root $AIC_DATA_ROOT `
+  --manifest "$AIC_DATA_ROOT\metadata\contestant_manifest.json" `
+  --sample "$AIC_DATA_ROOT\metadata\sample_submission.csv" `
+  --split public_lb `
+  --config deit_tiny_aic_stage1 `
+  --checkpoint "model\ORTrack_AIC.pth.tar" `
+  --output "$OUTPUT_DIR\ortrack_aic_predictions.csv"
 ```
 
 ## Local Evaluation
 
-For local evaluation on the provided annotated train/validation split:
+If annotated train/validation data is available, run the evaluation entrypoint:
 
 ```bash
 docker run --gpus all --rm \
-  -v /path/to/Data:/data:ro \
+  -v /path/to/aic-data:/data:ro \
   -v /path/to/output:/output \
-  aic-ortrack-ep0008 /workspace/run_evaluation.sh
+  ortrack-aic /workspace/run_evaluation.sh
 ```
 
-The default evaluation split file is:
+Optional environment variables:
 
-```text
-/workspace/ORTrack/data_specs/aic_contest_val.txt
-```
+- `DATA_ROOT`: mounted dataset root, default `/data`
+- `OUTPUT_DIR`: evaluation output directory, default `/output/eval_train`
+- `CHECKPOINT`: checkpoint path, default `/workspace/model/ORTrack_AIC.pth.tar`
+- `CONFIG`: ORTrack config name, default `deit_tiny_aic_stage1`
+- `SPLIT_FILE`: evaluation split file, default `/workspace/ORTrack/data_specs/aic_contest_val.txt`
 
-## Reproducibility Notes
+## Notes
 
 - Inference is online-only and does not use future frames.
 - The tracker is initialized only from the first available annotated frame for each sequence.
-- Predictions are produced for the original provided frame rate, not reframed or downsampled videos.
-- The packaged CSV is the raw ORTrack ep0008 public-LB submission.
+- Predictions are produced at the original frame rate.
 - Checksums for the main deliverables are recorded in `checksums_sha256.txt`.
 
 ## License
 
-The bundled ORTrack source code is MIT licensed by its original author; see `code/ORTrack/LICENSE`. This repository preserves that source snapshot and adds AIC submission packaging around it.
+The bundled ORTrack source code is MIT licensed by its original author; see `code/ORTrack/LICENSE`. This repository preserves that source snapshot and adds AIC Challenge packaging around it.

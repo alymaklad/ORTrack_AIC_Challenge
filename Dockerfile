@@ -18,7 +18,7 @@ COPY requirements_docker.txt /workspace/requirements_docker.txt
 RUN pip install --no-cache-dir -r /workspace/requirements_docker.txt
 
 COPY code/ORTrack /workspace/ORTrack
-COPY model/ORTrack_ep0008.pth.tar /workspace/model/ORTrack_ep0008.pth.tar
+COPY model/ORTrack_AIC.pth.tar /workspace/model/ORTrack_AIC.pth.tar
 COPY run_inference.sh /workspace/run_inference.sh
 COPY run_evaluation.sh /workspace/run_evaluation.sh
 

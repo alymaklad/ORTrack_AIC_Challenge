@@ -2,6 +2,7 @@ import argparse
 import csv
 import json
 import math
+import os
 import re
 import sys
 from pathlib import Path
@@ -76,16 +77,20 @@ def track_sequence(tracker, data_root, item):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data-root", default=r"C:\AIC\Data")
-    parser.add_argument("--manifest", default=r"C:\AIC\Data\metadata\contestant_manifest.json")
-    parser.add_argument("--sample", default=r"C:\AIC\Data\metadata\sample_submission.csv")
-    parser.add_argument("--output", default=r"C:\AIC\ORTrack\output\ortrack_deit_public_lb_submission.csv")
+    parser.add_argument("--data-root", default=os.environ.get("AIC_DATA_ROOT", "/data"))
+    parser.add_argument("--manifest", default=None)
+    parser.add_argument("--sample", default=None)
+    parser.add_argument("--output", default="outputs/ortrack_aic_predictions.csv")
     parser.add_argument("--config", default="deit_tiny_patch16_224")
     parser.add_argument("--checkpoint", default=None)
     parser.add_argument("--split", default="public_lb")
     args = parser.parse_args()
 
     data_root = Path(args.data_root)
+    if args.manifest is None:
+        args.manifest = str(data_root / "metadata" / "contestant_manifest.json")
+    if args.sample is None:
+        args.sample = str(data_root / "metadata" / "sample_submission.csv")
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 

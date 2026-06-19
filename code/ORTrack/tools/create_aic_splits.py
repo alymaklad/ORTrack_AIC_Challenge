@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import random
 from collections import defaultdict
 from pathlib import Path
@@ -7,8 +8,9 @@ from pathlib import Path
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--manifest", default=r"C:\AIC\Data\metadata\contestant_manifest.json")
-    parser.add_argument("--output-dir", default=r"C:\AIC\ORTrack\data_specs")
+    data_root = Path(os.environ.get("AIC_DATA_ROOT", "/data"))
+    parser.add_argument("--manifest", default=str(data_root / "metadata" / "contestant_manifest.json"))
+    parser.add_argument("--output-dir", default="data_specs")
     parser.add_argument("--val-ratio", type=float, default=0.15)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()

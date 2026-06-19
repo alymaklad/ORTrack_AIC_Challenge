@@ -1,6 +1,7 @@
 import argparse
 import csv
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -141,11 +142,11 @@ def evaluate_sequence(tracker, data_root, rel_key, item, pred_dir, absence_polic
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data-root", default=r"C:\AIC\Data")
-    parser.add_argument("--manifest", default=r"C:\AIC\Data\metadata\contestant_manifest.json")
+    parser.add_argument("--data-root", default=os.environ.get("AIC_DATA_ROOT", "/data"))
+    parser.add_argument("--manifest", default=None)
     parser.add_argument("--split", default="train")
     parser.add_argument("--split-file", default=None)
-    parser.add_argument("--output", default=r"C:\AIC\ORTrack\output\aic_train_eval")
+    parser.add_argument("--output", default="outputs/aic_train_eval")
     parser.add_argument("--config", default="deit_tiny_aic_stage1")
     parser.add_argument("--checkpoint", default=None)
     parser.add_argument("--policy", default="")
@@ -156,6 +157,8 @@ def main():
     args = parser.parse_args()
 
     data_root = Path(args.data_root)
+    if args.manifest is None:
+        args.manifest = str(data_root / "metadata" / "contestant_manifest.json")
     output = Path(args.output)
     pred_dir = output / "predictions"
     output.mkdir(parents=True, exist_ok=True)

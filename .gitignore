@@ -36,5 +36,5 @@ Thumbs.db
 *.tar.gz
 *.7z
 
-# Keep the selected packaged checkpoint tracked explicitly.
-!model/ORTrack_ep0008.pth.tar
+# Keep the packaged checkpoint tracked explicitly.
+!model/ORTrack_AIC.pth.tar

@@ -69,14 +69,14 @@ from lib.utils.box_ops import clip_box, box_xywh_to_xyxy, box_iou
 # ============================================================================
 
 # ── Paths ────────────────────────────────────────────────────────────────────
-PYTHON_EXE      = r"C:\AIC\aic4_env\Scripts\python.exe"
-SAVE_DIR        = r"C:\AIC\ORTrack\output_aic_finetune_v3"
-PRETRAINED_CKPT = r"C:\AIC\ORTrack\downloaded_models\Model\deit_tiny_patch16_224\ORTrack_ep0300.pth.tar"
-MANIFEST_PATH   = r"C:\AIC\Data\metadata\contestant_manifest.json"
-DATA_ROOT       = r"C:\AIC\Data"
+PYTHON_EXE      = sys.executable
+SAVE_DIR        = str(ROOT / "outputs" / "aic_finetune")
+PRETRAINED_CKPT = str(ROOT / "model" / "ORTrack_AIC.pth.tar")
+DATA_ROOT       = os.environ.get("AIC_DATA_ROOT", "/data")
+MANIFEST_PATH   = str(Path(DATA_ROOT) / "metadata" / "contestant_manifest.json")
 GOT10K_ROOT     = None          # set to None to skip mixing
-VAL_SPLIT_FILE  = r"C:\AIC\ORTrack\data_specs\aic_contest_val.txt"
-EVAL_SCRIPT     = r"C:\AIC\ORTrack\eval_aic_train.py"
+VAL_SPLIT_FILE  = str(ROOT / "data_specs" / "aic_contest_val.txt")
+EVAL_SCRIPT     = str(ROOT / "eval_aic_train.py")
 
 # ── Model ────────────────────────────────────────────────────────────────────
 ORTRACK_CONFIG  = "deit_tiny_aic_stage1"   # used only to load params / network

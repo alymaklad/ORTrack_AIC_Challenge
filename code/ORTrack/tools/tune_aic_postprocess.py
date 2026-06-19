@@ -3,6 +3,7 @@ import csv
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 import yaml
@@ -135,15 +136,15 @@ def run_eval(args, variant):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--python", default=r"C:\AIC\aic4_env\Scripts\python.exe")
+    parser.add_argument("--python", default=sys.executable)
     parser.add_argument("--base-config", default="deit_tiny_aic_stage1")
     parser.add_argument(
         "--checkpoint",
-        default=r"C:\AIC\ORTrack\output_aic_finetune\checkpoints\train\ortrack\deit_tiny_aic_stage1\ORTrack_ep0008.pth.tar",
+        default="model/ORTrack_AIC.pth.tar",
     )
-    parser.add_argument("--val-split", default=r"C:\AIC\ORTrack\data_specs\aic_contest_val.txt")
-    parser.add_argument("--output-dir", default=r"C:\AIC\ORTrack\output_aic_finetune\postprocess_tuning_stage1_ep0008")
-    parser.add_argument("--config-prefix", default="deit_tiny_aic_stage1_ep0008")
+    parser.add_argument("--val-split", default="data_specs/aic_contest_val.txt")
+    parser.add_argument("--output-dir", default="outputs/postprocess_tuning")
+    parser.add_argument("--config-prefix", default="deit_tiny_aic_stage1")
     parser.add_argument("--limit-variants", type=int, default=0)
     args = parser.parse_args()
 

@@ -25,8 +25,9 @@ FONT = cv2.FONT_HERSHEY_SIMPLEX
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--manifest", default=r"C:\AIC\Data\metadata\contestant_manifest.json")
-    parser.add_argument("--data-root", default=r"C:\AIC\Data")
+    data_root = Path(os.environ.get("AIC_DATA_ROOT", "/data"))
+    parser.add_argument("--manifest", default=str(data_root / "metadata" / "contestant_manifest.json"))
+    parser.add_argument("--data-root", default=str(data_root))
     parser.add_argument("--split", default="public_lb")
     parser.add_argument("--sequence", required=True)
     parser.add_argument("--config", default="deit_tiny_aic_stage1")

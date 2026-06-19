@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 from pathlib import Path
 
 import cv2
@@ -34,9 +35,10 @@ def extract_sequence(data_root, out_root, key, item, jpeg_quality):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--manifest", default=r"C:\AIC\Data\metadata\contestant_manifest.json")
-    parser.add_argument("--data-root", default=r"C:\AIC\Data")
-    parser.add_argument("--output", default=r"C:\AIC\Data\frames_cache")
+    data_root = Path(os.environ.get("AIC_DATA_ROOT", "/data"))
+    parser.add_argument("--manifest", default=str(data_root / "metadata" / "contestant_manifest.json"))
+    parser.add_argument("--data-root", default=str(data_root))
+    parser.add_argument("--output", default=str(data_root / "frames_cache"))
     parser.add_argument("--split", default="train")
     parser.add_argument("--jpeg-quality", type=int, default=95)
     args = parser.parse_args()

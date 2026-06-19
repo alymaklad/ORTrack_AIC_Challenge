@@ -3,7 +3,7 @@ set -euo pipefail
 
 DATA_ROOT="${DATA_ROOT:-/data}"
 OUTPUT_DIR="${OUTPUT_DIR:-/output/eval_train}"
-CHECKPOINT="${CHECKPOINT:-/workspace/model/ORTrack_ep0008.pth.tar}"
+CHECKPOINT="${CHECKPOINT:-/workspace/model/ORTrack_AIC.pth.tar}"
 CONFIG="${CONFIG:-deit_tiny_aic_stage1}"
 SPLIT_FILE="${SPLIT_FILE:-/workspace/ORTrack/data_specs/aic_contest_val.txt}"
 

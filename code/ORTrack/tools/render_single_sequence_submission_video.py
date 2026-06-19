@@ -1,6 +1,7 @@
 import argparse
 import csv
 import json
+import os
 from pathlib import Path
 
 import cv2
@@ -16,7 +17,7 @@ def parse_args():
     parser.add_argument("--submission", required=True)
     parser.add_argument("--diagnostics", required=True)
     parser.add_argument("--output", required=True)
-    parser.add_argument("--data-root", default=r"C:\AIC\Data")
+    parser.add_argument("--data-root", default=os.environ.get("AIC_DATA_ROOT", "/data"))
     parser.add_argument("--max-width", type=int, default=1280)
     return parser.parse_args()
 

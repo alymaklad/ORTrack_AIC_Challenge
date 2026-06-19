@@ -22,11 +22,11 @@ DATA:
     SIZE: 128
     NUMBER: 1
   CONTEST:
-    MANIFEST: C:\AIC\Data\metadata\contestant_manifest.json
-    DATA_ROOT: C:\AIC\Data
-    SPLIT_FILE: C:\AIC\ORTrack\data_specs\aic_contest_train.txt
-    SPLIT_FILE_VAL: C:\AIC\ORTrack\data_specs\aic_contest_val.txt
-    FRAME_CACHE_DIR: C:\AIC\Data\frames_cache
+    MANIFEST: ${AIC_DATA_ROOT}/metadata/contestant_manifest.json
+    DATA_ROOT: ${AIC_DATA_ROOT}
+    SPLIT_FILE: data_specs/aic_contest_train.txt
+    SPLIT_FILE_VAL: data_specs/aic_contest_val.txt
+    FRAME_CACHE_DIR: ${AIC_DATA_ROOT}/frames_cache
     CURRICULUM_STAGE: 1
     TEMPORAL_STRATEGY: curriculum
     VELOCITY_AWARE: false
@@ -45,7 +45,7 @@ DATA:
     - 1
     SAMPLE_PER_EPOCH: 1500
 MODEL:
-  PRETRAIN_FILE: C:\AIC\ORTrack\output\checkpoints\train\ortrack\deit_tiny_patch16_224\ORTrack_ep0300.pth.tar
+  PRETRAIN_FILE: model/ORTrack_AIC.pth.tar
   IS_DISTILL: false
   EXTRA_MERGER: false
   RETURN_INTER: false
@@ -82,11 +82,11 @@ TEST:
   TEMPLATE_SIZE: 128
   POST_PROCESS:
     ENABLE: true
-    SMOOTH_ALPHA: 0.9
-    LOW_CONF_ALPHA: 0.65
+    SMOOTH_ALPHA: 0.85
+    LOW_CONF_ALPHA: 0.55
     LOW_CONF_THRESHOLD: 0.2
-    MAX_CENTER_JUMP_OBJ: 3.0
-    MAX_SCALE_CHANGE: 1.7
+    MAX_CENTER_JUMP_OBJ: 5.0
+    MAX_SCALE_CHANGE: 2.0
     MIN_BOX_SIZE: 2.0
     TEMPLATE_UPDATE: false
     TEMPLATE_UPDATE_CONF: 0.6

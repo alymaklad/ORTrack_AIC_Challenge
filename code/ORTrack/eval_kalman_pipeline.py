@@ -39,6 +39,7 @@ import argparse
 import csv
 import json
 import math
+import os
 import re
 import sys
 import time
@@ -623,13 +624,14 @@ def evaluate_sequence(tracker, data_root, rel_key, item, pred_dir, cfg):
 
 def main():
     parser = argparse.ArgumentParser(description="Kalman-augmented ORTrack eval")
-    parser.add_argument("--data-root",   default=r"C:\AIC\Data")
-    parser.add_argument("--manifest",    default=r"C:\AIC\Data\metadata\contestant_manifest.json")
+    data_root = Path(os.environ.get("AIC_DATA_ROOT", "/data"))
+    parser.add_argument("--data-root",   default=str(data_root))
+    parser.add_argument("--manifest",    default=str(data_root / "metadata" / "contestant_manifest.json"))
     parser.add_argument("--split",       default="train")
-    parser.add_argument("--output",      default=r"C:\AIC\ORTrack\output\aic_train_eval_kalman")
+    parser.add_argument("--output",      default="outputs/aic_train_eval_kalman")
     parser.add_argument("--config",      default="deit_tiny_aic_stage1")
     parser.add_argument("--checkpoint",
-                        default=r"C:\AIC\ORTrack\downloaded_models\Model\deit_tiny_patch16_224\ORTrack_ep0300.pth.tar",
+                        default="model/ORTrack_AIC.pth.tar",
                         help="Path to pretrained DeiT Tiny weights")
     parser.add_argument("--conf-threshold", type=float, default=0.35,
                         help="Score threshold; below this frame is occluded")

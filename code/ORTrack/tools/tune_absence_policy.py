@@ -269,17 +269,19 @@ def tune(records):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data-root", default=r"C:\AIC\Data")
-    parser.add_argument("--manifest", default=r"C:\AIC\Data\metadata\contestant_manifest.json")
-    parser.add_argument("--split-file", default=r"C:\AIC\ORTrack\data_specs\aic_contest_val.txt")
+    parser.add_argument("--data-root", default=os.environ.get("AIC_DATA_ROOT", "/data"))
+    parser.add_argument("--manifest", default=None)
+    parser.add_argument("--split-file", default="data_specs/aic_contest_val.txt")
     parser.add_argument("--config", default="deit_tiny_aic_stage1")
     parser.add_argument(
         "--checkpoint",
-        default=r"C:\AIC\ORTrack\output_aic_finetune\checkpoints\train\ortrack\deit_tiny_aic_stage1\ORTrack_ep0008.pth.tar",
+        default="model/ORTrack_AIC.pth.tar",
     )
-    parser.add_argument("--output-dir", default=r"C:\AIC\ORTrack\output_aic_finetune\absence_policy_stage1_ep0008")
+    parser.add_argument("--output-dir", default="outputs/absence_policy")
     parser.add_argument("--limit", type=int, default=0)
     args = parser.parse_args()
+    if args.manifest is None:
+        args.manifest = str(Path(args.data_root) / "metadata" / "contestant_manifest.json")
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
